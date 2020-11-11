@@ -240,6 +240,74 @@ body {
     width: 31%;
 }
 
+.login {
+    background: #FAFAFA;
+    border: 1px solid #E8E8E8;
+    padding: 15px 25px;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.login-title {
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #595959;
+}
+
+.login-input {
+    display: block;
+    background-color: #fff;
+    border: 1px solid #e8e8e8;
+    padding: 5px 15px;
+    margin-bottom: 15px;
+}
+
+.login-forget {
+    text-align: center;
+    font-size: 12px;
+    color: #757575;
+    margin-bottom: 10px;
+    font-style: italic;
+}
+
+.login-signin {
+    background-color: #faad14;
+    border: none;
+    border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    -ms-border-radius: 4px;
+    -o-border-radius: 4px;
+    text-transform: uppercase;
+    cursor: pointer;
+    line-height: 32px;
+    font-size: 12px;
+    margin-bottom: 15px;
+}
+
+.login-signin:hover {
+    filter: opacity(80%);
+    -webkit-filter: opacity(80%);
+}
+
+.login-signin:active {
+    filter: brightness(85%);
+    -webkit-filter: brightness(85%);
+}
+
+.login-signup {
+    color: #fa8c16;
+    text-align: center;
+    font-size: 14px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
 .user {
     background: #FAFAFA;
     border: 1px solid #E8E8E8;
@@ -277,6 +345,7 @@ body {
 }
 
 .sidebar-nav {
+    display: none;
     background-color: #ffffff;
 }
 
@@ -316,7 +385,7 @@ body {
 }
 
 .button-new_post {
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: center;
     width: 100%;
@@ -331,6 +400,7 @@ body {
 }
 
 .card {
+    margin-top: 20px;
     background-color: #FFFFFF;
     border: 1px solid #E8E8E8;
 }
