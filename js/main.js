@@ -79,9 +79,9 @@ loginForm.addEventListener('submit', (event) => {
     setUsers.logIn(emailInput.value, passwordInput.value, toggleAuthDOM);
 });
 
-loginSignup.addEventListener('click', (event) => {
+loginSignup.addEventListener('click', (event) => {   
     event.preventDefault();
-    setUsers.signUp(emailInput.value, passwordInput.value,toggleAuthDOM);
+    setUsers.signUp(emailInput.value, passwordInput.value, toggleAuthDOM);
 });
 
 toggleAuthDOM();
