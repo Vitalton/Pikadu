@@ -8,6 +8,7 @@
     <link href="css/normalize.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
     <link href="css/media.css" rel="stylesheet">
+    <script src="js/main.js" defer></script>
     <title>Pikadu - главная!</title>
 </head>
 
@@ -85,13 +86,13 @@
                             <svg width="19" height="20" class="icon icon-likes">
                                 <use xlink:href="images/icons.svg#likes"></use>
                             </svg>
-                            <span class="likes-counter">26</span>
+                            <span class="likes-counter">57</span>
                         </button>
                         <button class="post-button comments">
                             <svg width="21" height="21" class="icon icon-comments">
                                 <use xlink:href="images/icons.svg#comments"></use>
                             </svg>
-                            <span class="comments-counter">57</span>
+                            <span class="comments-counter">26</span>
                         </button>
                         <button class="post-button save">
                             <svg width="20" height="20" class="icon icon-save">
@@ -195,17 +196,36 @@
                 </form>
             </div>
             <div class="user">
-                <a href="#" class="user-info">
-                    <img width="40" height="40" src="images/avatar-2.jpg" alt="photo: user" class="user-avatar">
-                    <span class="user-name">vitalton</span>
-                </a>
-                <!-- /.user-info -->
-                <a href="" class="exit">
-                    <svg class="icon icon-exit">
-                        <use xlink:href="images/icons.svg#exit"></use>
-                    </svg>
-                </a>
-                <!-- /.exit -->
+                <div class="user-container">
+                    <a href="#" class="user-info">
+                        <img width="40" height="40" src="images/avatar-2.jpg" alt="photo: user" class="user-avatar">
+                        <span class="user-name">vitalton</span>
+                    </a>
+                    <!-- /.user-info -->
+                    <a href="#" class="edit">
+                        <img class="icon icon-edit" src="images/edit-button.svg" alt="edit profile">
+                    </a>
+                    <!-- /.edit -->
+                    <a href="#" class="exit">
+                        <svg class="icon icon-exit">
+                            <use xlink:href="images/icons.svg#exit"></use>
+                        </svg>
+                    </a>
+                    <!-- /.exit -->
+                </div>
+                <form class="edit-container">
+                    <h2 class="edit-title">Редактировать</h2>
+                    <label class="edit-label">
+                        Ваш логин
+                        <input type="text" class="edit-input edit-username" name="username" placeholder="Логин"
+                            required>
+                    </label>
+                    <label class="edit-label">
+                        Ваше фото
+                        <input type="text" class="edit-input edit-photo" name="photo" placeholder="URL-photo">
+                    </label>
+                    <button class="edit-btn">Сохранить</button>
+                </form>
             </div>
             <!-- /.user -->
             <nav class="sidebar-nav">
@@ -261,7 +281,6 @@
         <!-- /.sidebar -->
     </div>
     <!-- /.content -->
-    <script src="js/main.js"></script>
 </body>
 
 </html>

@@ -312,6 +312,9 @@ body {
     background: #FAFAFA;
     border: 1px solid #E8E8E8;
     padding: 15px 25px;
+}
+
+.user-container {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -320,6 +323,7 @@ body {
 .user-info {
     display: flex;
     align-items: center;
+    margin-right: auto;
 }
 
 .user-avatar {
@@ -329,6 +333,7 @@ body {
     -moz-border-radius: 50%;
     -ms-border-radius: 50%;
     -o-border-radius: 50%;
+    object-fit: cover;
 }
 
 .user-name {
@@ -340,6 +345,68 @@ body {
 
 .icon-exit {
     fill: #000;
+    width: 25px;
+    height: 25px;
+}
+
+.edit {
+    margin-right: 10px;
+}
+
+.edit-container {
+    display: none;
+}
+
+.edit-container.visible {
+    margin-top: 15px;
+    display: block;
+}
+
+.edit-title {
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #595959;
+    text-transform: uppercase;
+}
+
+.edit-label {
+    display: block;
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 16px;
+    font-weight: 400;
+    color: #595959;
+}
+
+.edit-input {
+    display: block;
+    margin: 0 auto;
+    margin-top: 7px;
+    width: 100%;
+    padding: 5px 10px;
+    background-color: #fff;
+    border: 1px solid #e8e8e8;
+}
+
+.edit-btn {
+    background-color: #faad14;
+    border: none;
+    border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    -ms-border-radius: 4px;
+    -o-border-radius: 4px;
+    text-transform: uppercase;
+    cursor: pointer;
+    line-height: 32px;
+    font-size: 12px;
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+.icon-edit {
     width: 25px;
     height: 25px;
 }
