@@ -133,7 +133,12 @@ body {
 }
 
 .posts {
+    display: none;
     width: 67%;
+}
+
+.posts.visible {
+    display: block;
 }
 
 .post {
@@ -162,10 +167,14 @@ body {
 }
 
 .tag {
-    margin-right: 10px;
+    margin-left: 10px;
     font-size: 14px;
     line-height: 22px;
     color: #BFBFBF;
+}
+
+.tag:first-child {
+    margin-left: 0;
 }
 
 .post-footer {
@@ -221,6 +230,7 @@ body {
     -moz-border-radius: 4px;
     -ms-border-radius: 4px;
     -o-border-radius: 4px;
+    object-fit: cover;
 }
 
 .author-username {
@@ -459,6 +469,10 @@ body {
     margin: 20px 0;
 }
 
+.button-new_post.visible {
+    display: flex;
+}
+
 .icon-fire {
     fill: #fff;
     width: 12px;
@@ -529,38 +543,49 @@ body {
 }
 
 .add-post {
-    display: flex;
+    display: none;
     flex-direction: column;
+    width: 67%;
 }
 
-.add-title {
+.add-post.visible {
+    display: flex;
+}
+
+.add-title,
+.add-text,
+.add-tags {
     background: #FFFFFF;
     border: 1px solid #E8E8E8;
     padding: 23px 30px;
     margin-bottom: 16px;
-    font-family: "SFProDisplay-Semibold", sans-serif;
-    font-size: 16px;
-    line-height: 24px;
-    color: #000000;
-}
-
-.add-text {
-    padding: 23px 30px;
-    margin-bottom: 30px;
-    background: #FFFFFF;
-    border: 1px solid #E8E8E8;
     font-size: 14px;
     line-height: 22px;
     color: #595959;
+}
+
+.add-title {
+    color: #000000;
+    font-family: "SFProDisplay-Semibold", sans-serif;
+    font-size: 16px;
+    line-height: 24px;
+}
+
+.add-text {
     min-height: 362px;
-    resize: vertical;
+    resize: none;
+}
+
+.add-buttons {
+    display: flex;
+    justify-content: center;
 }
 
 .add-button {
-    width: 100%;
-    max-width: 370px;
-    margin-right: 2%;
     cursor: pointer;
+    margin-right: 2%;
+    max-width: 370px;
+    width: 100%;
 }
 
 .button-outline {
