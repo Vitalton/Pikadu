@@ -56,6 +56,15 @@ const addPostForm = document.querySelector('.add-post');
 
 const setUsers = {
     user: null,
+    initUser(handler) {
+        firebase.auth().onAuthStateChanged(user => {
+            if (user){
+                this.user = user;
+            } else {
+                this.user = null;
+            }
+        })
+    },
     // Функция входа учётной записи
     logIn(email, password, handler){
     if(!regExpValidEmail.test(email)) {
