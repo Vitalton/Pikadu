@@ -59,10 +59,11 @@ const setUsers = {
     initUser(handler) {
         firebase.auth().onAuthStateChanged(user => {
             if (user){
-                this.user = user;
+               this.user = user;
             } else {
-                this.user = null;
+               this.user = null;
             }
+            if(handler) handler();
         })
     },
     // Функция входа учётной записи
@@ -71,62 +72,93 @@ const setUsers = {
         alert("Email не валиден");
         return;
     }
-       const user = this.getUser(email);
-       if(user && user.password === password){
-           this.authorizedUser(user);
-            if (handler){
-            handler();
-        }
-       } else {
-           alert('Пользователь с такими данными не найден!')
-       }
+    firebase.auth().signInWithEmailAndPassword(email, password)
+        .then((user) => {
+            
+        }) 
+        .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+			if(errorCode === 'auth/wrong-password'){
+				alert('Неверный пароль');
+			} else if(errorCode === 'auth/user-not-found'){
+				alert('Пользователь с таким email не найден');
+			} else{
+			   alert(errorMessage);
+			}
+        });
+    //    const user = this.getUser(email);
+    //    if(user && user.password === password){
+    //        this.authorizedUser(user);
+    //         if (handler){
+    //         handler();
+    //     }
+    //    } else {
+    //        alert('Пользователь с такими данными не найден!')
+    //    }
     },
     // Функция выхода учётной записи
-    logOut(handler){
-        this.user = null; 
-         if (handler){
-            handler();
-        }
+    logOut(){
+        firebase.auth().signOut();
     },
     // Функция регистрации учётной записи
     signUp(email, password, handler){
-         if(!regExpValidEmail.test(email)) {
-        alert("Email не валиден");
-        return;
-        }
-        if(!email.trim() || !password.trim()){
-            return alert('Введите данные!');
-        }
-        if(!this.getUser(email)){
-            const user = {email, password, displayName: email.split('@')[0]};
-            listUsers.push(user);
-            this.authorizedUser(user);
-             if (handler){
-            handler();
-        }
-        } else {
-            alert('Пользователь с таким email уже зарегистрирован!')
-        }
+      if(!regExpValidEmail.test(email)) {
+      alert("Email не валиден");
+      return;
+      }
+      if(!email.trim() || !password.trim()){
+         return alert('Введите данные!');
+      }
+      firebase.auth().createUserWithEmailAndPassword(email, password)
+         .then((user) => {
+            this.editUser(email.split('@')[0], null, handler);
+         })
+         .catch((error) => {
+               const errorCode = error.code;
+               const errorMessage = error.message;
+               if(errorCode === 'auth/weak-password'){
+                  alert('Слабый пароль');
+               } else if(errorCode === 'auth/email-already-in-use'){
+                  alert('Пользователь с таким email уже зарегистрирован');
+               } else{
+                  alert(errorMessage);
+               }
+         });
+        // if(!this.getUser(email)){
+        //     const user = {email, password, displayName: email.split('@')[0]};
+        //     listUsers.push(user);
+        //     this.authorizedUser(user);
+        //      if (handler){
+        //     handler();
+        // }
+        // } else {
+        //     alert('Пользователь с таким email уже зарегистрирован!')
+        // }
     }, 
-    // Функция получения эл. почты учётной записи
-    getUser(email){
-        return listUsers.find((item) => item.email === email)
-    },
-    // Функция авторизации учётной записи
-    authorizedUser(user){
-        this.user = user; 
-    },
+   //  // Функция получения эл. почты учётной записи
+   //  getUser(email){
+   //    return listUsers.find((item) => item.email === email)
+   //  },
+   //  // Функция авторизации учётной записи
+   //  authorizedUser(user){
+   //    this.user = user; 
+   //  },
     // Функция редактирования учётной записи
-    editUser(userName, userPhoto, handler){
-        if (userName){
-            this.user.displayName = userName;
-        }
-        if (userPhoto){
-            this.user.photo = userPhoto;
-        }
-         if (handler){
-            handler();
-        }
+    editUser(displayName, photoURL, handler){
+       const user = firebase.auth().currentUser;
+      if (displayName){
+         if (photoURL){
+            user.updateProfile({
+               displayName,
+               photoURL
+            }).then(handler);
+         } else{
+            user.updateProfile({
+               displayName
+            }).then(handler);
+         }
+      }
     },
 }; 
 
@@ -154,6 +186,7 @@ const setPosts = {
     ],
     addPost(title, text, tags, handler){
         this.allPosts.unshift({
+            id: `postID${(+new Date()).toString(16)}`,
             title,
             text, 
             tags: tags.split(',').map(item => item.trim()),
@@ -178,7 +211,7 @@ const toggleAuthDOM = () => {
         loginElement.style.display = 'none';
         userElement.style.display = '';
         userNameElement.textContent = user.displayName;
-        userAvatarElem.src = user.photo || userAvatarElem.src;
+        userAvatarElem.src = user.photoURL || userAvatarElem.src;
         addPostButton.classList.add('visible');   
     } else {
         loginElement.style.display = '';
@@ -269,7 +302,7 @@ loginSignup.addEventListener('click', (event) => {
 // Выход из учётной записи
 exitElem.addEventListener('click', event => {   
     event.preventDefault();
-    setUsers.logOut(toggleAuthDOM);
+    setUsers.logOut();
 });
 
 
@@ -292,9 +325,6 @@ menuToggle.addEventListener('click', function(event) {
     event.preventDefault();
     menu.classList.toggle('visible');
 });
-
-showAllPosts();
-toggleAuthDOM();
 
 addPostButton.addEventListener('click', event =>{
     event.preventDefault();
@@ -319,7 +349,10 @@ addPostForm.addEventListener('submit', event => {
     addPostForm.classList.remove('visible');
     addPostForm.reset();
     addPostButton.classList.add('visible');
-})
+});
+
+setUsers.initUser(toggleAuthDOM);
+showAllPosts();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
