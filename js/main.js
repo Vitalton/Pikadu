@@ -19,6 +19,7 @@ const loginForm = document.querySelector('.login-form');
 const emailInput = document.querySelector('.login-email');
 const passwordInput = document.querySelector('.login-password');
 const loginSignup = document.querySelector('.login-signup');
+const loginForget = document.querySelector('.login-forget');
 
 const userElement = document.querySelector('.user');
 const userNameElement = document.querySelector('.user-name');
@@ -36,23 +37,7 @@ const postsWrapper = document.querySelector('.posts');
 const addPostButton = document.querySelector('.button-new_post');
 const addPostForm = document.querySelector('.add-post');
 
-// БД пользователей
- const listUsers = [
-    {   
-        id: '01',
-        email: 'vitalton@gmail.com',
-        password: '111',
-        displayName: 'vitalton',
-        photo: 'https://i.pinimg.com/originals/d2/de/95/d2de9556e9eef282d01f208bfb8d5090.jpg'
-    },
-    {
-        id: '02',
-        email: 'lelahorn@gmail.com',
-        password: '111',
-        displayName: 'lelahorn',
-        photo: 'https://img1.goodfon.com/original/1920x1280/0/d3/devushka-krasivaya-lico-golubye.jpg'
-    }
-];
+const defaultPhoto = userAvatarElem.src;
 
 const setUsers = {
     user: null,
@@ -146,7 +131,7 @@ const setUsers = {
    //  },
     // Функция редактирования учётной записи
     editUser(displayName, photoURL, handler){
-       const user = firebase.auth().currentUser;
+      const user = firebase.auth().currentUser;
       if (displayName){
          if (photoURL){
             user.updateProfile({
@@ -160,47 +145,52 @@ const setUsers = {
          }
       }
     },
+    sendForget(email){
+        firebase.auth().sendPasswordResetEmail(email)
+        .then(() => {
+            alert('Письмо для сброса пароля отправлено!');
+        }).catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            if(errorCode === 'auth/weak-password'){
+                alert('Слабый пароль');
+            } else if(errorCode === 'auth/email-already-in-use'){
+                alert('Пользователь с таким email уже зарегистрирован');
+            } else{
+                alert(errorMessage);
+            }
+        });
+    }
 }; 
 
 
 const setPosts = {
-    allPosts: [
-        {
-            title: 'Релакс',
-            text: 'Блогеры, которые не стесняются показать хотя бы кусочек своей яркой жизни, дают аудитории шикарный контент. Не каждый решается на такое, ведь многие волнуются о том, что подумают окружающие. Но если у вас есть читатели (даже если пока это только друзья и родственники), им будет интересно узнать о вас больше. Поделитесь своим личным опытом, переживаниями и умозаключениями. Покажите, как вы живете – возможно, кому-то уже хочется подражать вам! Зачем все это аудитории? Закономерный вопрос! Давайте подумаем вместе. Все, что вы делаете, вы делаете для своих читателей. Они — не просто ваши поклонники. Это потенциальные покупатели, которых вы УЖЕ чем-то зацепили. Теперь важно заручиться их доверием, чтобы «рыбке» было сложнее «сорваться с крючка». Чем больше читатели знают о вас, тем более близким другом вы для них становитесь. Поэтому когда вы сделаете им предложение купить, вероятнее всего, его примут без долгих раздумий. Многие увлекательные истории из своей жизни Олесь публикует в личном блоге. Они всегда яркие, неординарные и обязательно с полезностью.',
-            tags: [ 'познавательно', 'новое', 'в тренде' ],
-            author: {displayName: 'vitalton', photo: 'https://i.pinimg.com/originals/d2/de/95/d2de9556e9eef282d01f208bfb8d5090.jpg'},
-            date: '11.11.2020, 11:45:12',
-            likes: 26,
-            comments: 57,
-        },
-        {
-            title: '«Мотивашка»',
-            text: 'Это очень эффективный вид контента. В нем минимум полезной информации и развлекательных приемов. Это чистой воды вдохновение. Если ваши посты дарят ощущение, что за спиной «расправляются крылья», просыпается неуемная энергия, чтобы творить и делать мир прекраснее, поздравляю – вы шикарный мотиватор! Аудитория высоко это ценит. Лучше всего такие посты подавать в форме историй, описаний жизни известных людей или просто цитатников. В такой статье не нужно обсуждать глобальные проблемы или говорить о чем-то сложном и непонятном. Умные мысли и философские размышления пока отложите в сторону. Напишите о простых вещах, которые волнуют многих, но о которых мало кто задумывается по-настоящему. Вот как статьи-мотивашки выглядят у нас.',
-            tags: [ 'горячее', 'новое', 'в тренде' ],
-            author: {displayName: 'lelahorn', photo: 'https://img1.goodfon.com/original/1920x1280/0/d3/devushka-krasivaya-lico-golubye.jpg'},
-            date: '10.11.2020, 10:44:02',
-            likes: 100,
-            comments: 85,
-        }
-    ],
+    allPosts: [],
     addPost(title, text, tags, handler){
+        const user = firebase.auth().currentUser;
         this.allPosts.unshift({
-            id: `postID${(+new Date()).toString(16)}`,
+            id: `postID${(+new Date()).toString(16)}-${user.uid}`,
             title,
             text, 
             tags: tags.split(',').map(item => item.trim()),
             author: {
                 displayName: setUsers.user.displayName,
-                photo: setUsers.user.photo
+                photo: setUsers.user.photoURL
             },
             date: new Date().toLocaleString(),
             likes: 0,
             comments: 0
-        })
-        if (handler){
+        });
+        firebase.database().ref('post').set(this.allPosts)
+            .then(() => this.getPosts(handler))
+            .then()
+            .catch();
+    },
+    getPosts(handler){
+        firebase.database().ref('post').on('value', snapshot => {
+            this.allPosts = snapshot.val() || [];
             handler();
-        }
+        })
     }
 }
 
@@ -211,7 +201,7 @@ const toggleAuthDOM = () => {
         loginElement.style.display = 'none';
         userElement.style.display = '';
         userNameElement.textContent = user.displayName;
-        userAvatarElem.src = user.photoURL || userAvatarElem.src;
+        userAvatarElem.src = user.photoURL || defaultPhoto;
         addPostButton.classList.add('visible');   
     } else {
         loginElement.style.display = '';
@@ -223,7 +213,6 @@ const toggleAuthDOM = () => {
 };
 
 const showAllPosts = () => {
-
     let postsHTML = '';
     setPosts.allPosts.forEach(({title, text, date, likes, comments, tags, author}) => {
         postsHTML += `
@@ -284,75 +273,81 @@ const showAllPosts = () => {
  
 const init = () => {
     // Вход в учётную запись
-loginForm.addEventListener('submit', (event) => {
-    event.preventDefault();
-    setUsers.logIn(emailInput.value, passwordInput.value, toggleAuthDOM);
-    loginForm.reset();
-});
+    loginForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        setUsers.logIn(emailInput.value, passwordInput.value, toggleAuthDOM);
+        loginForm.reset();
+    });
 
 
-// Регистрация учётной записи
-loginSignup.addEventListener('click', (event) => {   
-    event.preventDefault();
-    setUsers.signUp(emailInput.value, passwordInput.value, toggleAuthDOM);
-    loginForm.reset();
-});
+    // Регистрация учётной записи
+    loginSignup.addEventListener('click', (event) => {   
+        event.preventDefault();
+        setUsers.signUp(emailInput.value, passwordInput.value, toggleAuthDOM);
+        loginForm.reset();
+    });
 
 
-// Выход из учётной записи
-exitElem.addEventListener('click', event => {   
-    event.preventDefault();
-    setUsers.logOut();
-});
+    // Выход из учётной записи
+    exitElem.addEventListener('click', event => {   
+        event.preventDefault();
+        setUsers.logOut();
+    });
 
 
-// Кнопка редактирования учётной записи
-editElem.addEventListener('click', event => {   
-    event.preventDefault();
-    editContainer.classList.toggle('visible');
-    editUsername.value = setUsers.user.displayName;
-});
+    // Кнопка редактирования учётной записи
+    editElem.addEventListener('click', event => {   
+        event.preventDefault();
+        editContainer.classList.toggle('visible');
+        editUsername.value = setUsers.user.displayName;
+    });
 
 
-// Редактирование учётной записи
-editContainer.addEventListener('submit', event => {
-    event.preventDefault();
-    setUsers.editUser(editUsername.value, editPhotoURL.value, toggleAuthDOM);
-    editContainer.classList.remove('visible');
-});
+    // Редактирование учётной записи
+    editContainer.addEventListener('submit', event => {
+        event.preventDefault();
+        setUsers.editUser(editUsername.value, editPhotoURL.value, toggleAuthDOM);
+        editContainer.classList.remove('visible');
+    });
 
-menuToggle.addEventListener('click', function(event) {
-    event.preventDefault();
-    menu.classList.toggle('visible');
-});
+    menuToggle.addEventListener('click', function(event) {
+        event.preventDefault();
+        menu.classList.toggle('visible');
+    });
 
-addPostButton.addEventListener('click', event =>{
-    event.preventDefault();
-    postsWrapper.classList.remove('visible');
-    addPostForm.classList.add('visible');
-    addPostButton.classList.remove('visible');
-});
+    addPostButton.addEventListener('click', event =>{
+        event.preventDefault();
+        postsWrapper.classList.remove('visible');
+        addPostForm.classList.add('visible');
+        addPostButton.classList.remove('visible');
+    });
 
-addPostForm.addEventListener('submit', event => {
-    event.preventDefault();
-    const {title, text, tags} = addPostForm.elements;
-    if (title.value.length < 4) {
-        alert('Длина заголовка должна быть от 4 символов!');
-        return;
-    }
-    if (text.value.length < 30) {
-        alert('Длина содержания должна быть от 30 символов!');
-        return;
-    }
+    addPostForm.addEventListener('submit', event => {
+        event.preventDefault();
+        const {title, text, tags} = addPostForm.elements;
+        if (title.value.length < 4) {
+            alert('Длина заголовка должна быть от 4 символов!');
+            return;
+        }
+        if (text.value.length < 30) {
+            alert('Длина содержания должна быть от 30 символов!');
+            return;
+        }
 
-    setPosts.addPost(title.value, text.value, tags.value, showAllPosts);
-    addPostForm.classList.remove('visible');
-    addPostForm.reset();
-    addPostButton.classList.add('visible');
-});
+        setPosts.addPost(title.value, text.value, tags.value, showAllPosts);
+        addPostForm.classList.remove('visible');
+        addPostForm.reset();
+        addPostButton.classList.add('visible');
+    });
 
-setUsers.initUser(toggleAuthDOM);
-showAllPosts();
+    loginForget.addEventListener('click', event => {
+        event.preventDefault();
+        setUsers.sendForget(emailInput.value);
+        emailInput.value = '';
+    });
+
+    setUsers.initUser(toggleAuthDOM);
+    setPosts.getPosts(showAllPosts);
 }
 
 document.addEventListener('DOMContentLoaded', () => {

@@ -344,6 +344,7 @@ body {
     -ms-border-radius: 50%;
     -o-border-radius: 50%;
     object-fit: cover;
+    color: #f00;
 }
 
 .user-name {
